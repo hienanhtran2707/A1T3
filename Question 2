@@ -28,12 +28,20 @@ ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p
 mysql> use compbiol;
 mysql> show tables;
 a. 
-ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'SELECT m.LastName, m.FirstName from Member m left outer join Member c on m.Coach = c.MemberID where m.Coach is NULL';
+mysql> select m.LastName, m.FirstName from Member m left outer join Member c on m.Coach = c.MemberID where m.Coach is NULL;
 b. 
-ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName from Member m, Entry e where m.MemberID = e.MemberID and e.Year=2010';
+mysql> select LastName, FirstName from Member m where m.JoinDate >='2010' and m.JoinDate < '2011';
 c. 
-ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName, m.MemberID from Member m where not exists (select * from Entry e where e.MemberID=m.MemberID and e.Year=2014)';
-Another solution:
-ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName, m.MemberID from Member m where not exists ( select * from Entry e where e.MemberID=m.MemberID and exists ( select * from Tournament t where t.TourID=e.TourID and e.Year=2014 ) )';
+mysql> select distinct m.LastName, m.FirstName,m.MemberID \
+    -> from Member m inner join Entry e on m.MemberID=e.MemberID \
+    -> where NOT EXISTS \
+    -> (select * from Tournament t inner join Entry e on e.TourID=t.TourID \
+    -> where e.Year='2014' and e.MemberID = m.MemberID);
 d. 
-ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName from Member m where not exists (select * from Tournament t where not exists (select * from Entry e where e.MemberID=m.MemberID and e.TourID=t.TourID));'
+mysql> select m.LastName, m.FirstName, m.MemberID \
+    -> from Member m  \
+    -> where not exists \
+    -> (select * from Entry e1 where not exists \
+    -> (select * from Entry e2 where e1.Year = e2.Year \
+    -> and e2.MemberID = m.MemberID));
+
