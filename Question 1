@@ -26,6 +26,7 @@ c.
 ubuntu@ip-172-31-26-119:~$ sort -n -k 1n expression.txt
 ubuntu@ip-172-31-26-119:~$ sort -n -k 1n annotation.txt
 ubuntu@ip-172-31-26-119:~$ join -1 1 -2 1 -t -o 1.1,1.2,2.1 annotation.txt expression.txt
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select a.gene, a.function, e.expr_value from annotation as a join expression as e where a.gene=e.gene;'
 d.
 mysql> select a1.gene, a1.metabolism from annotation a1, annotation a2 where a1.metabolism=a2.metabolism and a1.gene<>a2.gene;
 mysql> select distinct a1.metabolism from annotation a1, annotation a2 where a1.metabolism=a2.metabolism and a1.gene<>a2.gene;
