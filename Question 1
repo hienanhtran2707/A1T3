@@ -1,0 +1,39 @@
+Question 2:
+ubuntu@ip-172-31-26-119:~$ git clone https://github.com/zacharyPan/uauauauau
+ubuntu@ip-172-31-26-119:~$ cd ua*
+ubuntu@ip-172-31-26-119:~/uauauauau$ ls
+ubuntu@ip-172-31-26-119:~/uauauauau$ cat foo
+ubuntu@ip-172-31-26-119:~/uauauauau$ git clone https://github.com/Apress/beg-sql-queries
+ubuntu@ip-172-31-26-119:~/uauauauau$ ls
+ubuntu@ip-172-31-26-119:~/uauauauau$ cd beg*
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ ls
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ sudo apt-get install -y mdbtools
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ set -o vi
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ which mdb-tables
+/usr/bin/mdb-tables
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ #mdb-tables -1
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-tables -1 GolfClub.accdb
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p compbiol -e "drop table if exists Entry"
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p compbiol -e "drop table if exists Member"
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p compbiol -e "drop table if exists Team"
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p compbiol -e "drop table if exists Tournament"
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p compbiol -e "drop table if exists Type"
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-schema GolfClub.accdb mysql | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-export -D '%Y-%m-%d %H:%M:%S' -I mysql GolfClub.accdb Entry | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-export -D '%Y-%m-%d %H:%M:%S' -I mysql GolfClub.accdb Member | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-export -D '%Y-%m-%d %H:%M:%S' -I mysql GolfClub.accdb Team | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-export -D '%Y-%m-%d %H:%M:%S' -I mysql GolfClub.accdb Tournament | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mdb-export -D '%Y-%m-%d %H:%M:%S' -I mysql GolfClub.accdb Type | mysql -u Alice -p compbiol
+ubuntu@ip-172-31-26-119:~/uauauauau/beg-sql-queries$ mysql -u Alice -p          
+mysql> use compbiol;
+mysql> show tables;
+a. 
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'SELECT m.LastName, m.FirstName from Member m left outer join Member c on m.Coach = c.MemberID where m.Coach is NULL';
+b. 
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName from Member m, Entry e where m.MemberID = e.MemberID and e.Year=2010';
+c. 
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName, m.MemberID from Member m where not exists (select * from Entry e where e.MemberID=m.MemberID and e.Year=2014)';
+Another solution:
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName, m.MemberID from Member m where not exists ( select * from Entry e where e.MemberID=m.MemberID and exists ( select * from Tournament t where t.TourID=e.TourID and e.Year=2014 ) )';
+d. 
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select m.LastName, m.FirstName from Member m where not exists (select * from Tournament t where not exists (select * from Entry e where e.MemberID=m.MemberID and e.TourID=t.TourID));'
