@@ -1,0 +1,31 @@
+a. 
+ubuntu@ip-172-31-26-119:~$ set -o vi
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice –p
+mysql> create database compbiol;
+mysql> use compbiol;
+ubuntu@ip-172-31-26-119:~$ curl https://www.staff.hs-mittweida.de/~wuenschi/data/media/compbiolbook/expression.tab > expression.tab
+ubuntu@ip-172-31-26-119:~$ cat expression.tab
+ubuntu@ip-172-31-26-119:~$ curl https://www.staff.hs-mittweida.de/~wuenschi/data/media/compbiolbook/annotation.tab > annotation.tab
+ubuntu@ip-172-31-26-119:~$ cat annotation.tab
+ubuntu@ip-172-31-26-119:~$ mysqlimport --local -d --ignore-lines=0 -u Alice -p compbiol expression.tab
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from expression';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'delete from expression where expr_value is NULL';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from expression';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from expression;' > expression.txt
+ubuntu@ip-172-31-26-119:~$ ls expression.txt
+ubuntu@ip-172-31-26-119:~$ cat expression.txt
+b.
+ubuntu@ip-172-31-26-119:~$ mysqlimport --local -d --ignore-lines=0 -u Alice -p compbiol annotation.tab
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from annotation';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'delete from annotation where function is NULL';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from annotation';
+ubuntu@ip-172-31-26-119:~$ mysql -u Alice -p compbiol -e 'select * from annotation;' > annotation.txt
+ubuntu@ip-172-31-26-119:~$ ls annotation.txt
+ubuntu@ip-172-31-26-119:~$ cat annotation.txt
+c. 
+ubuntu@ip-172-31-26-119:~$ sort -n -k 1n expression.txt
+ubuntu@ip-172-31-26-119:~$ sort -n -k 1n annotation.txt
+ubuntu@ip-172-31-26-119:~$ join -1 1 -2 1 -t -o 1.1,1.2,2.1 annotation.txt expression.txt
+d.
+mysql> select a1.gene, a1.metabolism from annotation a1, annotation a2 where a1.metabolism=a2.metabolism and a1.gene<>a2.gene;
+mysql> select distinct a1.metabolism from annotation a1, annotation a2 where a1.metabolism=a2.metabolism and a1.gene<>a2.gene;
